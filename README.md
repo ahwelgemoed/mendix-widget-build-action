@@ -30,7 +30,7 @@ jobs:
         run: |
           npm install
         ##   Here is this Action
-      - uses: ahwelgemoed/widget-build-monorepo-action@main
+      - uses: ahwelgemoed/mendix-widget-build-action@main
         with:
           author_name: build-bot
           branch_to_push_to: main
