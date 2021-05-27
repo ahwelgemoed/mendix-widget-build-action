@@ -1,0 +1,33 @@
+name: "Action To build Mendix Widgets in Lerna Monorepo"
+description: "Build Some Widgets"
+author: "Arno Welgemoed"
+
+inputs:
+  GITHUB_TOKEN:
+    description: "GitHub token"
+    required: true
+  author_name:
+    description: "Git Author Name"
+    required: false
+  bot_commit_message:
+    description: "bot_commit_message"
+    required: false
+  bot_author_name:
+    description: "bot_author_name"
+    required: false
+  bot_author_email:
+    description: "bot_author_name"
+    required: false
+  commit_message_trigger:
+    description: "commit_message_trigger"
+    required: false
+  packages_folder:
+    description: "packages_folder"
+    required: false
+  identify_widgets_folders:
+    description: "identify_widgets_folders"
+    required: false
+
+runs:
+  using: "node12"
+  main: "dist/index.js"
