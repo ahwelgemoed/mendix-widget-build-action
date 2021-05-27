@@ -1,11 +1,11 @@
 <img  align="center" alt="headerIMG" src="./assets/logo.png" target="_blank" />
 
 <br/>
-This Action was written to keep package.json and package.xml in sync with each other, The action will also build the Widget and upload it to the release.
+This Action was written to keep package.json and package.xml in sync with each other, The action will also build the Widget and upload it as a release.
 
-See the Action in Action [here](https://github.com/mendixlabs/app-services-components)
+See the a Mono Repo Action see in Action [here](https://github.com/mendixlabs/app-services-components)
 
-See the Mono Repo Action see [here]()
+See the Mono Repo Action see [here](https://github.com/ahwelgemoed/mendix-widget-build-action-monorepo)
 
 ## Setup
 
