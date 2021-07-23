@@ -57,7 +57,6 @@ export async function commitGitChanges(git) {
         }
       }
     );
-    console.log(`x`, x);
     await git.push("origin", BRANCH_TO_PUSH_TO, ["--force"], (err) => {
       if (err) {
         core.error(`Error @ push ${err}`);
