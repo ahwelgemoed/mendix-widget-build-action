@@ -54,12 +54,12 @@ async function run() {
     await git.init();
     // Set Git Credentials
     await setGITCred(git);
-    // Build New Version
-    await runBuildCommand(widgetStructure);
     // Update XML to match Package.json and
     const newRawPackageXML = await _changeXMLVersion(packageXML, jsonVersion);
     //  Converts Js back to xml and writes xml file to disk
     await _writePackageXML(widgetStructure, newRawPackageXML);
+    // Build New Version
+    await runBuildCommand(widgetStructure);
     // Construct New Version Name
     const newTagName = `v${jsonVersion}`;
     await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
