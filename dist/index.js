@@ -16919,24 +16919,16 @@ var src_default = /*#__PURE__*/__nccwpck_require__.n(src);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./src/constants.ts
-const core = __nccwpck_require__(2186);
-const COMMIT_MESSAGE_TO_TRIGGER_WIDGET_BUILD = core.getInput("commit_message_trigger") || "publish new Package";
-const FOLDER_OF_PACKAGES = core.getInput("packages_folder") || "packages";
-const IDENTIFY_WIDGETS_FOLDERS = core.getInput("identify_widgets_folders") || "-widgets";
-const TRIGGER_COMMITS = {
-    WIDGET: COMMIT_MESSAGE_TO_TRIGGER_WIDGET_BUILD,
-};
-const FOLDERS_WHERE_MENDIX_WIDGETS_ARE = (/* unused pure expression or super */ null && (IDENTIFY_WIDGETS_FOLDERS));
 const PROJECT_PATH = `${process.env.GITHUB_WORKSPACE}`;
 const baseDir = process.env.GITHUB_WORKSPACE;
 
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(5747);
+// EXTERNAL MODULE: external "path"
+var external_path_ = __nccwpck_require__(5622);
 // EXTERNAL MODULE: ./node_modules/@expo/spawn-async/index.js
 var spawn_async = __nccwpck_require__(5562);
 var spawn_async_default = /*#__PURE__*/__nccwpck_require__.n(spawn_async);
-// EXTERNAL MODULE: external "path"
-var external_path_ = __nccwpck_require__(5622);
 // EXTERNAL MODULE: ./node_modules/xml-js/lib/index.js
 var lib = __nccwpck_require__(8821);
 ;// CONCATENATED MODULE: ./src/filesystemUtils.ts
@@ -16953,7 +16945,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-const filesystemUtils_core = __nccwpck_require__(2186);
+const core = __nccwpck_require__(2186);
 function _readPackageJSON(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
         const rawPackageJSON = yield external_fs_.readFileSync(external_path_.resolve(widgetStructure.packageJSON), "utf8");
@@ -16964,12 +16956,23 @@ function _readPackageJSON(widgetStructure) {
 function runBuildCommand(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { stdout } = yield spawn_async_default()("npm", [
-                "run",
+            const { stdout } = yield spawn_async_default()("yarn", [
                 "build",
                 "--prefix",
                 widgetStructure.base,
             ]);
+            return stdout;
+        }
+        catch (error) {
+            console.log(`error`, error);
+        }
+    });
+}
+function lists(widgetStructure) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { stdout } = yield spawn_async_default()("du", ["-sh", "*"]);
+            console.log(`stdout`, stdout);
             return stdout;
         }
         catch (error) {
@@ -17002,23 +17005,7 @@ function _writePackageXML(widgetStructure, rawNewPackageXML) {
             return;
         }
         catch (error) {
-            filesystemUtils_core.error(`Error @ _writePackageXML ${error}`);
-        }
-    });
-}
-function runInstallCommand(widgetStructure) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            // This Should Not Be an Issue with YARN
-            const { stdout } = yield spawnAsync("npm", [
-                "install",
-                "--prefix",
-                widgetStructure.base,
-            ]);
-            return stdout;
-        }
-        catch (error) {
-            filesystemUtils_core.error(`Error @ runInstallCommand ${error}`);
+            core.error(`Error @ _writePackageXML ${error}`);
         }
     });
 }
@@ -17029,7 +17016,7 @@ function findBuildFiles(folderPath) {
             return filesArray;
         }
         catch (error) {
-            filesystemUtils_core.error(`Error @ findBuildFiles ${error}`);
+            core.error(`Error @ findBuildFiles ${error}`);
         }
     });
 }
@@ -17037,15 +17024,6 @@ function findBuildFiles(folderPath) {
 // EXTERNAL MODULE: ./node_modules/mime-types/index.js
 var mime_types = __nccwpck_require__(3583);
 ;// CONCATENATED MODULE: ./src/utils.ts
-var utils_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 
 
 
@@ -17076,16 +17054,6 @@ function _changeXMLVersion(rawXML, version) {
     y.elements[0].elements[0].attributes.version = version;
     return y;
 }
-function findTagName(tagsArray, tagName) {
-    return utils_awaiter(this, void 0, void 0, function* () {
-        try {
-            return tagsArray.find((tag) => tag === tagName);
-        }
-        catch (error) {
-            utils_core.error(`Error @ findTagName ${error}`);
-        }
-    });
-}
 const assetData = (path) => {
     return {
         fileStream: external_fs_.readFileSync(path),
@@ -17107,7 +17075,6 @@ var gitUtils_awaiter = (undefined && undefined.__awaiter) || function (thisArg, 
 
 
 
-
 const gitUtils_core = __nccwpck_require__(2186);
 function setGITCred(git) {
     return gitUtils_awaiter(this, void 0, void 0, function* () {
@@ -17120,26 +17087,6 @@ function setGITCred(git) {
         }
         catch (error) {
             console.log(`error`, error);
-        }
-    });
-}
-function createATag(git) {
-    return gitUtils_awaiter(this, void 0, void 0, function* () {
-        try {
-            yield git.addTag(`hello`, (err) => {
-                if (err) {
-                    gitUtils_core.error(`Error @ add ${err}`);
-                }
-            });
-            yield git.push("origin", "main", ["--tags"], (err) => {
-                if (err) {
-                    gitUtils_core.error(`Error @ push ${err}`);
-                }
-            });
-            return;
-        }
-        catch (error) {
-            gitUtils_core.error(`Error @ commitGitChanges ${error}`);
         }
     });
 }
@@ -17164,6 +17111,7 @@ function commitGitChanges(git) {
         const BOT_MESSAGE = gitUtils_core.getInput("bot_commit_message") || "BOT COMMIT";
         const COMMIT_AUTHOR_NAME = gitUtils_core.getInput("bot_author_name") || "BOTTY";
         const COMMIT_AUTHOR_EMAIL = gitUtils_core.getInput("bot_author_email") || "BOT@BOTTY.inc";
+        const BRANCH_TO_PUSH_TO = gitUtils_core.getInput("branch_to_push_to") || "main";
         try {
             yield git.add("./*", (err) => {
                 if (err) {
@@ -17177,8 +17125,7 @@ function commitGitChanges(git) {
                     gitUtils_core.error(`Error @ commit ${err}`);
                 }
             });
-            console.log(`x`, x);
-            yield git.push("origin", "main", ["--force"], (err) => {
+            yield git.push("origin", BRANCH_TO_PUSH_TO, ["--force"], (err) => {
                 if (err) {
                     gitUtils_core.error(`Error @ push ${err}`);
                 }
@@ -17192,30 +17139,14 @@ function commitGitChanges(git) {
 }
 function createTagAndPushIt(github, context, sha, tag) {
     return gitUtils_awaiter(this, void 0, void 0, function* () {
+        const BOT_MESSAGE = gitUtils_core.getInput("bot_commit_message") || "BOT COMMIT";
         try {
-            const annotatedTag = yield github.git.createTag(Object.assign(Object.assign({}, context.repo), { tag: tag, message: "Hello", object: sha, type: "commit" }));
+            const annotatedTag = yield github.git.createTag(Object.assign(Object.assign({}, context.repo), { tag: tag, message: BOT_MESSAGE, object: sha, type: "commit" }));
             yield github.git.createRef(Object.assign(Object.assign({}, context.repo), { ref: `refs/tags/${tag}`, sha: annotatedTag ? annotatedTag.data.sha : sha }));
             return annotatedTag;
         }
         catch (error) {
-            gitUtils_core.error(`Error @ getAllTags ${error}`);
-        }
-    });
-}
-function getAllTags(github, repo) {
-    return gitUtils_awaiter(this, void 0, void 0, function* () {
-        let createdTags;
-        try {
-            const { data } = yield github.repos.listTags(Object.assign({}, repo));
-            if (data.length) {
-                createdTags = yield data.reduce((a, c) => {
-                    return [...a, c.name];
-                }, []);
-            }
-            return createdTags;
-        }
-        catch (error) {
-            gitUtils_core.error(`Error @ getAllTags ${error}`);
+            gitUtils_core.error(`Error @ createTagAndPushIt ${error}`);
         }
     });
 }
@@ -17253,17 +17184,6 @@ function uploadBuildFolderToRelease(github, widgetStructure, jsonVersion, releas
         }
     });
 }
-function getGitSHA() {
-    return gitUtils_awaiter(this, void 0, void 0, function* () {
-        try {
-            const { stdout } = yield spawnAsync("git", ["rev-parse", "HEAD"]);
-            return stdout;
-        }
-        catch (error) {
-            console.log(`error`, error);
-        }
-    });
-}
 
 ;// CONCATENATED MODULE: ./src/action.ts
 var action_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -17283,39 +17203,37 @@ var action_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _a
 
 const action_core = __nccwpck_require__(2186);
 const git = src_default()({ baseDir: baseDir });
-const repo = github.context.repo;
 const GITHUB_TOKEN = action_core.getInput("GITHUB_TOKEN");
 const action_github = (0,github.getOctokit)(process.env.GITHUB_TOKEN || GITHUB_TOKEN);
-const { GITHUB_REF, GITHUB_SHA } = process.env;
+const { GITHUB_SHA } = process.env;
 function run() {
     return action_awaiter(this, void 0, void 0, function* () {
         const packagesFolders = yield _readFileAsync(PROJECT_PATH);
+        if (!packagesFolders) {
+            return action_core.error("No Files Found");
+        }
         const widgetStructure = _widgetFolderStructure();
         const packageJSON = yield _readPackageJSON(widgetStructure);
         // Gets Version in Package.json
         const jsonVersion = packageJSON.version;
         // Gets Name in Package.json
         const packagePackageName = packageJSON.name;
-        console.log(`packagesFolders`, packagesFolders);
-        console.log(`packageJSON`, packageJSON);
-        console.log(`jsonVersion`, jsonVersion);
-        console.log(`packagePackageName`, packagePackageName);
         // Reads package.xml
         const packageXML = yield _readPackageXML(widgetStructure);
         // Parses .xml and and Returns package.xml Version
         const xmlVersion = _xmlVersion(packageXML);
-        console.log(`xmlVersion`, xmlVersion);
         if (xmlVersion !== jsonVersion) {
             //  Inits Git
             yield git.init();
             // Set Git Credentials
             yield setGITCred(git);
-            // Build New Version
-            yield runBuildCommand(widgetStructure);
             // Update XML to match Package.json and
             const newRawPackageXML = yield _changeXMLVersion(packageXML, jsonVersion);
             //  Converts Js back to xml and writes xml file to disk
             yield _writePackageXML(widgetStructure, newRawPackageXML);
+            // Build New Version
+            yield runBuildCommand(widgetStructure);
+            yield lists(widgetStructure);
             // Construct New Version Name
             const newTagName = `v${jsonVersion}`;
             yield createTagAndPushIt(action_github, github.context, GITHUB_SHA, newTagName);
@@ -17329,104 +17247,7 @@ function run() {
             // Folder name where Widget is Build
             const upload = yield uploadBuildFolderToRelease(action_github, widgetStructure, jsonVersion, release);
             return upload;
-            // console.log(`annotatedTag`, annotatedTag);
-            // github.git.createTag({
-            //   owner:'Botty',
-            // })
-            // git.addTag;
-            // await createATag(git);
         }
-        // GET NPM
-        // const packageJSON = await _readPackageJSON(widgetStructure);
-        // NPM INSTALL
-        // NPM BUILD
-        // CREATE TAG
-        // CREATE RELEASE
-        // IF VERSION 1.0.0 AND NO TAGS INITIAL RELEASE
-        // IF VERSION IS NOT 1.0.0 => MATCH PACKAGE.JSON AND PACKAGE.XML
-        /**
-         *  Loop Through All Packages.
-         */
-        // let packagesToBuild = [];
-        // // Sees if PackageFolder is Dir
-        // if (fs.lstatSync(PACKAGES_PATH).isDirectory()) {
-        //   // Reads All Folder in /packages
-        //   const packagesFolders = await _readFileAsync(PACKAGES_PATH);
-        //   for (const packageSub of packagesFolders) {
-        //     // if folder has Widgets in and not utils
-        //     if (packageSub.name.includes(FOLDERS_WHERE_MENDIX_WIDGETS_ARE)) {
-        //       const PACKAGE_PATH = `${process.env.GITHUB_WORKSPACE}/packages/${packageSub.name}`;
-        //       // Reads all Folders in a Folder that ends with FOLDERS_WHERE_MENDIX_WIDGETS_ARE
-        //       const packageWidgetFolders = await _readFileAsync(PACKAGE_PATH);
-        //       // Loop Over All Widgets (Now Assume We are in Widgets Folder)
-        //       for (const packageFolder of packageWidgetFolders) {
-        //         // Builds a Helper Object with All the Paths we will need
-        //         const widgetStructure = _widgetFolderStructure(
-        //           packageSub.name,
-        //           packageFolder.name
-        //         );
-        //         // Reads Package.json
-        //         const packageJSON = await _readPackageJSON(widgetStructure);
-        //         // Gets Version in Package.json
-        //         const jsonVersion = packageJSON.version;
-        //         // Gets Name in Package.json
-        //         const packagePackageName = packageJSON.name;
-        //         // Reads package.xml
-        //         const packageXML = await _readPackageXML(widgetStructure);
-        //         // Parses .xml and and Returns package.xml Version
-        //         const xmlVersion = _xmlVersion(packageXML);
-        //         // Checks if Json Version and xml matches.
-        //         if (xmlVersion !== jsonVersion) {
-        //           // Inits Git
-        //           await git.init();
-        //           // Set Git Credentials
-        //           await setGITCred(git);
-        //           // Update XML to match Package.json and
-        //           const newRawPackageXML = await _changeXMLVersion(
-        //             packageXML,
-        //             jsonVersion
-        //           );
-        //           //  converts Js back to xml and writes xml file to disk
-        //           await _writePackageXML(widgetStructure, newRawPackageXML);
-        //           /**
-        //            * TODO - Don't think we need this anymore
-        //            * This was done to keep track of projects has been changed.
-        //            */
-        //           // Push Package Name To Build Array Keep
-        //           await packagesToBuild.push(widgetStructure);
-        //           // Should not be needed for YARN but this installs all NPM modules from this path
-        //           await runInstallCommand(widgetStructure);
-        //           // Build New Version
-        //           await runBuildCommand(widgetStructure);
-        //           // Tag Name Lerna Created
-        //           const tagName = `${packagePackageName}@${jsonVersion}`;
-        //           // Uses Github REST to get all Tags
-        //           const tagsArray = await getAllTags(github, repo);
-        //           // Matches the 2 tags and makes sure the one we expect lerna made is actually is there
-        //           const foundTag = await findTagName(tagsArray, tagName);
-        //           if (!foundTag) {
-        //             return core.error("No Tag Found");
-        //           }
-        //           // Commit and Push Code
-        //           await commitGitChanges(git);
-        //           // Changes Tag to Release
-        //           const release = await createRelease(github, context, foundTag);
-        //           if (!release) {
-        //             return core.error("No Release Found");
-        //           }
-        //           // Folder name where Widget is Build
-        //           const upload = await uploadBuildFolderToRelease(
-        //             github,
-        //             widgetStructure,
-        //             jsonVersion,
-        //             release
-        //           );
-        //           return upload;
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
     });
 }
 run();
