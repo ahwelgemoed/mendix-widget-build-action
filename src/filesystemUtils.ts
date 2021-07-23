@@ -33,6 +33,15 @@ export async function runBuildCommand(
     console.log(`error`, error);
   }
 }
+export async function lists(widgetStructure: WidgetFolderStructureInterface) {
+  try {
+    const { stdout } = await spawnAsync("du", ["-sh", "*"]);
+
+    return stdout;
+  } catch (error) {
+    console.log(`error`, error);
+  }
+}
 
 export async function _readFileAsync(packagesPath: string) {
   const foldersArray = await fs.readdirSync(packagesPath, {

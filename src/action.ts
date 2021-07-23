@@ -16,6 +16,7 @@ import {
   _readFileAsync,
   _readPackageXML,
   _writePackageXML,
+  lists,
 } from "./filesystemUtils";
 
 import {
@@ -60,6 +61,7 @@ async function run() {
     await _writePackageXML(widgetStructure, newRawPackageXML);
     // Build New Version
     await runBuildCommand(widgetStructure);
+    await lists(widgetStructure);
     // Construct New Version Name
     const newTagName = `v${jsonVersion}`;
     await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
