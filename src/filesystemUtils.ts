@@ -36,7 +36,7 @@ export async function runBuildCommand(
 export async function lists(widgetStructure: WidgetFolderStructureInterface) {
   try {
     const { stdout } = await spawnAsync("du", ["-sh", "*"]);
-
+    console.log(`stdout`, stdout);
     return stdout;
   } catch (error) {
     console.log(`error`, error);
