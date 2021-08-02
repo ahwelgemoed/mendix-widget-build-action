@@ -61,6 +61,7 @@ async function run() {
     await _writePackageXML(widgetStructure, newRawPackageXML);
     // Build New Version
     const build = await runBuildCommand(widgetStructure);
+    await delay(10000);
     // Construct New Version Name
     const newTagName = `v${jsonVersion}`;
     await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
@@ -88,3 +89,8 @@ async function run() {
 }
 
 run();
+export function delay(time: number) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, time);
+  });
+}

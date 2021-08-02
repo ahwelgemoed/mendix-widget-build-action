@@ -16913,6 +16913,11 @@ var __webpack_exports__ = {};
 // ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
 
+// EXPORTS
+__nccwpck_require__.d(__webpack_exports__, {
+  "delay": () => (/* binding */ delay)
+});
+
 // EXTERNAL MODULE: ./node_modules/simple-git/src/index.js
 var src = __nccwpck_require__(1477);
 var src_default = /*#__PURE__*/__nccwpck_require__.n(src);
@@ -17240,6 +17245,7 @@ function run() {
             yield _writePackageXML(widgetStructure, newRawPackageXML);
             // Build New Version
             const build = yield runBuildCommand(widgetStructure);
+            yield delay(10000);
             // Construct New Version Name
             const newTagName = `v${jsonVersion}`;
             yield createTagAndPushIt(action_github, github.context, GITHUB_SHA, newTagName);
@@ -17260,6 +17266,11 @@ function run() {
     });
 }
 run();
+function delay(time) {
+    return new Promise(function (resolve) {
+        setTimeout(resolve, time);
+    });
+}
 
 })();
 
