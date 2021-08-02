@@ -16,6 +16,7 @@ import {
   _readFileAsync,
   _readPackageXML,
   _writePackageXML,
+  copyDir,
   lists,
 } from "./filesystemUtils";
 
@@ -74,6 +75,11 @@ async function run() {
     // }
     console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
     console.log(`build`, build);
+
+    copyDir(
+      `${widgetStructure.build}/${jsonVersion}`,
+      `${widgetStructure.build}`
+    );
     await lists(widgetStructure);
     // Folder name where Widget is Build
     // const upload = await uploadBuildFolderToRelease(

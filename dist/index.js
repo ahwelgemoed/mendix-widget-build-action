@@ -16941,14 +16941,14 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-
+const { promises: filesystemUtils_fs } = __nccwpck_require__(5747);
 
 
 
 const core = __nccwpck_require__(2186);
 function _readPackageJSON(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
-        const rawPackageJSON = yield external_fs_.readFileSync(external_path_.resolve(widgetStructure.packageJSON), "utf8");
+        const rawPackageJSON = yield filesystemUtils_fs.readFileSync(external_path_.resolve(widgetStructure.packageJSON), "utf8");
         const parsedPackageJSON = JSON.parse(rawPackageJSON);
         return parsedPackageJSON;
     });
@@ -16975,7 +16975,7 @@ function lists(widgetStructure) {
         try {
             const testFolder = widgetStructure.base;
             // const fs = require('fs');
-            external_fs_.readdir(`${testFolder}/dist`, (err, files) => {
+            filesystemUtils_fs.readdir(`${testFolder}/dist`, (err, files) => {
                 files.forEach((file) => {
                     console.log("🔥", file);
                 });
@@ -16988,7 +16988,7 @@ function lists(widgetStructure) {
 }
 function _readFileAsync(packagesPath) {
     return __awaiter(this, void 0, void 0, function* () {
-        const foldersArray = yield external_fs_.readdirSync(packagesPath, {
+        const foldersArray = yield filesystemUtils_fs.readdirSync(packagesPath, {
             withFileTypes: true,
         });
         return foldersArray;
@@ -16996,7 +16996,7 @@ function _readFileAsync(packagesPath) {
 }
 function _readPackageXML(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
-        const rawPackageXML = yield external_fs_.readFileSync(external_path_.resolve(widgetStructure.packageXML), "utf8");
+        const rawPackageXML = yield filesystemUtils_fs.readFileSync(external_path_.resolve(widgetStructure.packageXML), "utf8");
         var options = { ignoreComment: true, alwaysChildren: true };
         var result = lib.xml2js(rawPackageXML, options);
         return result;
@@ -17007,7 +17007,7 @@ function _writePackageXML(widgetStructure, rawNewPackageXML) {
         const options = { compact: false, ignoreComment: true, spaces: 4 };
         const result = yield lib.js2xml(rawNewPackageXML, options);
         try {
-            yield external_fs_.writeFileSync(widgetStructure.packageXML, result);
+            yield filesystemUtils_fs.writeFileSync(widgetStructure.packageXML, result);
             return;
         }
         catch (error) {
@@ -17018,11 +17018,24 @@ function _writePackageXML(widgetStructure, rawNewPackageXML) {
 function filesystemUtils_findBuildFiles(folderPath) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const filesArray = yield fs.readdirSync(path.resolve(folderPath), "utf8");
+            const filesArray = yield filesystemUtils_fs.readdirSync(path.resolve(folderPath), "utf8");
             return filesArray;
         }
         catch (error) {
             core.error(`Error @ findBuildFiles ${error}`);
+        }
+    });
+}
+function copyDir(src, dest) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield filesystemUtils_fs.mkdir(dest, { recursive: true });
+        let entries = yield filesystemUtils_fs.readdir(src, { withFileTypes: true });
+        for (let entry of entries) {
+            let srcPath = external_path_.join(src, entry.name);
+            let destPath = external_path_.join(dest, entry.name);
+            entry.isDirectory()
+                ? yield copyDir(srcPath, destPath)
+                : yield filesystemUtils_fs.copyFile(srcPath, destPath);
         }
     });
 }
@@ -17251,6 +17264,7 @@ function run() {
             // }
             console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
             console.log(`build`, build);
+            copyDir(`${widgetStructure.build}/${jsonVersion}`, `${widgetStructure.build}`);
             yield lists(widgetStructure);
             // Folder name where Widget is Build
             // const upload = await uploadBuildFolderToRelease(

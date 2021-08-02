@@ -1,4 +1,4 @@
-import * as fs from "fs";
+const { promises: fs } = require("fs");
 import * as path from "path";
 import spawnAsync from "@expo/spawn-async";
 import * as convertXML from "xml-js";
@@ -93,5 +93,19 @@ export async function findBuildFiles(folderPath: string) {
     return filesArray;
   } catch (error) {
     core.error(`Error @ findBuildFiles ${error}`);
+  }
+}
+
+export async function copyDir(src, dest) {
+  await fs.mkdir(dest, { recursive: true });
+  let entries = await fs.readdir(src, { withFileTypes: true });
+
+  for (let entry of entries) {
+    let srcPath = path.join(src, entry.name);
+    let destPath = path.join(dest, entry.name);
+
+    entry.isDirectory()
+      ? await copyDir(srcPath, destPath)
+      : await fs.copyFile(srcPath, destPath);
   }
 }
