@@ -1,8 +1,9 @@
 import * as fs from "fs";
 import * as path from "path";
 import spawnAsync from "@expo/spawn-async";
-import spawn from "await-spawn";
+// import spawn from "await-spawn";
 import * as convertXML from "xml-js";
+const { spawn } = require("child_process");
 
 const core = require("@actions/core");
 
