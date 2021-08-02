@@ -21203,7 +21203,7 @@ function runBuildCommand(widgetStructure) {
         try {
             const bl = yield await_spawn_default()("ls", ["-al"]);
             console.log(bl.toString());
-            const xx = yield await_spawn_default()(`npm run lint`);
+            const xx = yield await_spawn_default()(`npm`);
             console.log(xx.toString());
             // `--prefix ${widgetStructure.base}`,
             return xx;
