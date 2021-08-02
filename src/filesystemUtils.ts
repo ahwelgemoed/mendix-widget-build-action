@@ -22,7 +22,7 @@ export async function runBuildCommand(
   widgetStructure: WidgetFolderStructureInterface
 ) {
   try {
-    const { stdout } = await spawnAsync("yarn", [
+    const { stdout } = await spawnAsync("npm", [
       "build",
       "--prefix",
       widgetStructure.base,
