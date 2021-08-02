@@ -17247,6 +17247,7 @@ function run() {
             // if (!release) {
             //   return core.error("No Release Found");
             // }
+            console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
             console.log(`build`, build);
             yield lists(widgetStructure);
             // Folder name where Widget is Build
