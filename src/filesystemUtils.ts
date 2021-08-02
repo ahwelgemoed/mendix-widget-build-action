@@ -37,13 +37,8 @@ export async function lists(widgetStructure: WidgetFolderStructureInterface) {
   try {
     const testFolder = widgetStructure.base;
     // const fs = require('fs');
-    fs.readdir(testFolder, (err, files) => {
+    fs.readdir(`${testFolder}/dist`, (err, files) => {
       files.forEach((file) => {
-        if (file == "dist") {
-          fs.readdir(`${testFolder}/dist`, (err, a) => {
-            console.log(`a`, a);
-          });
-        }
         console.log("🔥", file);
       });
     });

@@ -60,8 +60,7 @@ async function run() {
     //  Converts Js back to xml and writes xml file to disk
     await _writePackageXML(widgetStructure, newRawPackageXML);
     // Build New Version
-    await runBuildCommand(widgetStructure);
-    await lists(widgetStructure);
+    const build = await runBuildCommand(widgetStructure);
     // Construct New Version Name
     const newTagName = `v${jsonVersion}`;
     await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
@@ -73,6 +72,8 @@ async function run() {
     if (!release) {
       return core.error("No Release Found");
     }
+    console.log(`build`, build);
+    await lists(widgetStructure);
     // Folder name where Widget is Build
     const upload = await uploadBuildFolderToRelease(
       github,

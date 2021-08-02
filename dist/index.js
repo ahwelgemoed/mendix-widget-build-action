@@ -16956,7 +16956,7 @@ function _readPackageJSON(widgetStructure) {
 function runBuildCommand(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { stdout } = yield spawn_async_default()("yarn", [
+            const { stdout } = yield spawn_async_default()("npm", [
                 "build",
                 "--prefix",
                 widgetStructure.base,
@@ -16973,13 +16973,8 @@ function lists(widgetStructure) {
         try {
             const testFolder = widgetStructure.base;
             // const fs = require('fs');
-            external_fs_.readdir(testFolder, (err, files) => {
+            external_fs_.readdir(`${testFolder}/dist`, (err, files) => {
                 files.forEach((file) => {
-                    if (file == "dist") {
-                        external_fs_.readdir(`${testFolder}/dist`, (err, a) => {
-                            console.log(`a`, a);
-                        });
-                    }
                     console.log("🔥", file);
                 });
             });
@@ -17241,8 +17236,7 @@ function run() {
             //  Converts Js back to xml and writes xml file to disk
             yield _writePackageXML(widgetStructure, newRawPackageXML);
             // Build New Version
-            yield runBuildCommand(widgetStructure);
-            yield lists(widgetStructure);
+            const build = yield runBuildCommand(widgetStructure);
             // Construct New Version Name
             const newTagName = `v${jsonVersion}`;
             yield createTagAndPushIt(action_github, github.context, GITHUB_SHA, newTagName);
@@ -17253,6 +17247,8 @@ function run() {
             if (!release) {
                 return action_core.error("No Release Found");
             }
+            console.log(`build`, build);
+            yield lists(widgetStructure);
             // Folder name where Widget is Build
             const upload = yield uploadBuildFolderToRelease(action_github, widgetStructure, jsonVersion, release);
             return upload;
