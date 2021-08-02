@@ -16956,12 +16956,14 @@ function _readPackageJSON(widgetStructure) {
 function runBuildCommand(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { stdout } = yield spawn_async_default()("npm", [
-                "build",
-                "--prefix",
-                widgetStructure.base,
-            ]);
-            return stdout;
+            const result = yield spawn_async_default()("npm", ["build", "--prefix", widgetStructure.base], {
+                cwd: process.cwd(),
+                env: process.env,
+                stdio: "pipe",
+            });
+            var savedOutput = result.stdout;
+            console.log(String(savedOutput));
+            return savedOutput;
         }
         catch (error) {
             console.log(`error`, error);

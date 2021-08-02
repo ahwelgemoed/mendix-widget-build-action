@@ -22,13 +22,19 @@ export async function runBuildCommand(
   widgetStructure: WidgetFolderStructureInterface
 ) {
   try {
-    const { stdout } = await spawnAsync("npm", [
-      "build",
-      "--prefix",
-      widgetStructure.base,
-    ]);
+    const result = await spawnAsync(
+      "npm",
+      ["build", "--prefix", widgetStructure.base],
+      {
+        cwd: process.cwd(),
+        env: process.env,
+        stdio: "pipe",
+      }
+    );
+    var savedOutput = result.stdout;
 
-    return stdout;
+    console.log(String(savedOutput));
+    return savedOutput;
   } catch (error) {
     console.log(`error`, error);
   }
