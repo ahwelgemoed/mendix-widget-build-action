@@ -21204,11 +21204,9 @@ function runBuildCommand(widgetStructure) {
         try {
             const bl = yield await_spawn_default()("ls", ["-al"]);
             console.log(bl.toString());
-            const xx = yield await_spawn_default()(`npm`, [
-                "run build",
-                `--prefix ${widgetStructure.base}`,
-            ]);
+            const xx = yield await_spawn_default()(`npm`, ["run build"]);
             console.log(xx.toString());
+            // `--prefix ${widgetStructure.base}`,
             return xx;
             // const { stdout } = await spawnAsync("yarn", [
             //   "build",

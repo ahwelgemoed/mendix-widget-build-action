@@ -25,11 +25,9 @@ export async function runBuildCommand(
   try {
     const bl = await spawn("ls", ["-al"]);
     console.log(bl.toString());
-    const xx = await spawn(`npm`, [
-      "run build",
-      `--prefix ${widgetStructure.base}`,
-    ]);
+    const xx = await spawn(`npm`, ["run build"]);
     console.log(xx.toString());
+    // `--prefix ${widgetStructure.base}`,
 
     return xx;
 
