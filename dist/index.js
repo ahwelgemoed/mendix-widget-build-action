@@ -16975,6 +16975,11 @@ function lists(widgetStructure) {
             // const fs = require('fs');
             external_fs_.readdir(testFolder, (err, files) => {
                 files.forEach((file) => {
+                    if (file == "dist") {
+                        external_fs_.readdir(`${testFolder}/dist`, (err, a) => {
+                            console.log(`a`, a);
+                        });
+                    }
                     console.log("🔥", file);
                 });
             });

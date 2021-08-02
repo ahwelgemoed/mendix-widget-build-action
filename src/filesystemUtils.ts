@@ -39,6 +39,11 @@ export async function lists(widgetStructure: WidgetFolderStructureInterface) {
     // const fs = require('fs');
     fs.readdir(testFolder, (err, files) => {
       files.forEach((file) => {
+        if (file == "dist") {
+          fs.readdir(`${testFolder}/dist`, (err, a) => {
+            console.log(`a`, a);
+          });
+        }
         console.log("🔥", file);
       });
     });
