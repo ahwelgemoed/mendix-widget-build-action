@@ -16971,9 +16971,13 @@ function runBuildCommand(widgetStructure) {
 function lists(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { stdout } = yield spawn_async_default()("du", ["-sh", "*"]);
-            console.log(`stdout`, stdout);
-            return stdout;
+            const testFolder = widgetStructure.base;
+            // const fs = require('fs');
+            external_fs_.readdir(testFolder, (err, files) => {
+                files.forEach((file) => {
+                    console.log("🔥", file);
+                });
+            });
         }
         catch (error) {
             console.log(`error`, error);

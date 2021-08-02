@@ -35,9 +35,13 @@ export async function runBuildCommand(
 }
 export async function lists(widgetStructure: WidgetFolderStructureInterface) {
   try {
-    const { stdout } = await spawnAsync("du", ["-sh", "*"]);
-    console.log(`stdout`, stdout);
-    return stdout;
+    const testFolder = widgetStructure.base;
+    // const fs = require('fs');
+    fs.readdir(testFolder, (err, files) => {
+      files.forEach((file) => {
+        console.log("🔥", file);
+      });
+    });
   } catch (error) {
     console.log(`error`, error);
   }
