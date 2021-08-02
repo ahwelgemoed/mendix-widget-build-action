@@ -1,7 +1,8 @@
-const { promises: fs } = require("fs");
+import * as fs from "fs";
 import * as path from "path";
 import spawnAsync from "@expo/spawn-async";
 import * as convertXML from "xml-js";
+import { spawnSync } from "child_process";
 
 const core = require("@actions/core");
 
@@ -22,19 +23,14 @@ export async function runBuildCommand(
   widgetStructure: WidgetFolderStructureInterface
 ) {
   try {
-    const result = await spawnAsync(
-      "npm",
-      ["build", "--prefix", widgetStructure.base],
+    const exitCode = await spawnSync(
+      `npm run build --prefix ${widgetStructure.base}`,
       {
-        cwd: process.cwd(),
-        env: process.env,
-        stdio: "pipe",
+        shell: true,
       }
     );
-    var savedOutput = result.stdout;
 
-    console.log(String(savedOutput));
-    return savedOutput;
+    return exitCode;
   } catch (error) {
     console.log(`error`, error);
   }
@@ -93,19 +89,5 @@ export async function findBuildFiles(folderPath: string) {
     return filesArray;
   } catch (error) {
     core.error(`Error @ findBuildFiles ${error}`);
-  }
-}
-
-export async function copyDir(src, dest) {
-  await fs.mkdir(dest, { recursive: true });
-  let entries = await fs.readdir(src, { withFileTypes: true });
-
-  for (let entry of entries) {
-    let srcPath = path.join(src, entry.name);
-    let destPath = path.join(dest, entry.name);
-
-    entry.isDirectory()
-      ? await copyDir(srcPath, destPath)
-      : await fs.copyFile(srcPath, destPath);
   }
 }
