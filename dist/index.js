@@ -18823,7 +18823,9 @@ function runBuildCommand(widgetStructure) {
         try {
             const bl = yield spawn("ls", ["-al"]);
             console.log(bl.toString());
-            const xx = yield spawn(`npm run build --prefix ${widgetStructure.base}`);
+            const xx = yield spawn(`npm run build`, [
+                `--prefix ${widgetStructure.base}`,
+            ]);
             console.log(xx.toString());
             return xx;
         }
