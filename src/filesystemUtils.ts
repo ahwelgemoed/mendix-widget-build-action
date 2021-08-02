@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import spawnAsync from "@expo/spawn-async";
+const spawn = require("await-spawn");
+
 import * as convertXML from "xml-js";
 import { spawnSync } from "child_process";
 
@@ -23,14 +25,12 @@ export async function runBuildCommand(
   widgetStructure: WidgetFolderStructureInterface
 ) {
   try {
-    const exitCode = await spawnSync(
-      `npm run build --prefix ${widgetStructure.base}`,
-      {
-        shell: true,
-      }
-    );
+    const bl = await spawn("ls", ["-al"]);
+    console.log(bl.toString());
+    const xx = await spawn(`npm run build --prefix ${widgetStructure.base}`);
+    console.log(xx.toString());
 
-    return exitCode;
+    return xx;
   } catch (error) {
     console.log(`error`, error);
   }
