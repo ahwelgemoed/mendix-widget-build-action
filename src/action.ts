@@ -73,23 +73,20 @@ async function run() {
     if (!release) {
       return core.error("No Release Found");
     }
-    console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
+    console.log(`jsonVersion`, `${widgetStructure.build}`);
     console.log(`build`, build);
 
-    fs.readdir(
-      `${widgetStructure.build}/${jsonVersion}`,
-      function (err, files) {
-        //handling error
-        if (err) {
-          return console.log("Unable to scan directory: " + err);
-        }
-        //listing all files using forEach
-        files.forEach(function (file) {
-          // Do whatever you want to do with the file
-          console.log(file);
-        });
+    fs.readdir(`${widgetStructure.build}`, function (err, files) {
+      //handling error
+      if (err) {
+        return console.log("Unable to scan directory: " + err);
       }
-    );
+      //listing all files using forEach
+      files.forEach(function (file) {
+        // Do whatever you want to do with the file
+        console.log(file);
+      });
+    });
 
     // await lists(widgetStructure);
     // Folder name where Widget is Build

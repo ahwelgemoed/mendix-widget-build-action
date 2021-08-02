@@ -17250,9 +17250,9 @@ function run() {
             if (!release) {
                 return action_core.error("No Release Found");
             }
-            console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
+            console.log(`jsonVersion`, `${widgetStructure.build}`);
             console.log(`build`, build);
-            fs.readdir(`${widgetStructure.build}/${jsonVersion}`, function (err, files) {
+            fs.readdir(`${widgetStructure.build}`, function (err, files) {
                 //handling error
                 if (err) {
                     return console.log("Unable to scan directory: " + err);
