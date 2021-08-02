@@ -1320,7 +1320,7 @@ exports.default = spawnAsync;
 /***/ 5562:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-module.exports = __nccwpck_require__(4927).default;
+/* unused reexport */ __nccwpck_require__(4927).default;
 
 
 /***/ }),
@@ -21170,7 +21170,6 @@ var external_fs_ = __nccwpck_require__(5747);
 var external_path_ = __nccwpck_require__(5622);
 // EXTERNAL MODULE: ./node_modules/@expo/spawn-async/index.js
 var spawn_async = __nccwpck_require__(5562);
-var spawn_async_default = /*#__PURE__*/__nccwpck_require__.n(spawn_async);
 // EXTERNAL MODULE: ./node_modules/await-spawn/index.js
 var await_spawn = __nccwpck_require__(6050);
 var await_spawn_default = /*#__PURE__*/__nccwpck_require__.n(await_spawn);
@@ -21222,7 +21221,7 @@ function runBuildCommand(widgetStructure) {
 function lists(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { stdout } = yield spawn_async_default()("du", ["-sh", "*"]);
+            const { stdout } = yield spawnAsync("du", ["-sh", "*"]);
             console.log(`stdout`, stdout);
             return stdout;
         }
@@ -21260,10 +21259,10 @@ function _writePackageXML(widgetStructure, rawNewPackageXML) {
         }
     });
 }
-function findBuildFiles(folderPath) {
+function filesystemUtils_findBuildFiles(folderPath) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const filesArray = yield external_fs_.readdirSync(external_path_.resolve(folderPath), "utf8");
+            const filesArray = yield fs.readdirSync(path.resolve(folderPath), "utf8");
             return filesArray;
         }
         catch (error) {
@@ -21305,11 +21304,11 @@ function _changeXMLVersion(rawXML, version) {
     y.elements[0].elements[0].attributes.version = version;
     return y;
 }
-const assetData = (path) => {
+const utils_assetData = (path) => {
     return {
-        fileStream: external_fs_.readFileSync(path),
-        name: (0,external_path_.basename)(path),
-        contentType: mime_types.lookup(path) || "application/zip",
+        fileStream: fs.readFileSync(path),
+        name: basename(path),
+        contentType: mime.lookup(path) || "application/zip",
     };
 };
 
@@ -21415,7 +21414,7 @@ function uploadBuildFolderToRelease(github, widgetStructure, jsonVersion, releas
                 // Set Headers for Upload
                 const headers = {
                     "content-type": contentType,
-                    "content-length": external_fs_.statSync(filePath).size,
+                    "content-length": fs.statSync(filePath).size,
                 };
                 // Uploads Built to Release
                 const uploadAssetResponse = yield github.repos.uploadReleaseAsset(
@@ -21486,20 +21485,25 @@ function run() {
             const build = yield runBuildCommand(widgetStructure);
             // Construct New Version Name
             const newTagName = `v${jsonVersion}`;
-            yield createTagAndPushIt(action_github, github.context, GITHUB_SHA, newTagName);
+            // await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
             // Commit and Push Code
-            yield commitGitChanges(git);
+            // await commitGitChanges(git);
             // Changes Tag to Release
-            const release = yield createRelease(action_github, github.context, newTagName);
-            if (!release) {
-                return action_core.error("No Release Found");
-            }
+            // const release = await createRelease(github, context, newTagName);
+            // if (!release) {
+            // return core.error("No Release Found");
+            // }
             console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
             console.log(`build`, build);
-            yield lists(widgetStructure);
+            // await lists(widgetStructure);
             // Folder name where Widget is Build
-            const upload = yield uploadBuildFolderToRelease(action_github, widgetStructure, jsonVersion, release);
-            return upload;
+            // const upload = await uploadBuildFolderToRelease(
+            //   github,
+            //   widgetStructure,
+            //   jsonVersion,
+            //   release
+            // );
+            // return upload;
         }
     });
 }
