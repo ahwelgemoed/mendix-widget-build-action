@@ -1320,7 +1320,7 @@ exports.default = spawnAsync;
 /***/ 5562:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-module.exports = __nccwpck_require__(4927).default;
+/* unused reexport */ __nccwpck_require__(4927).default;
 
 
 /***/ }),
@@ -16933,7 +16933,6 @@ var external_fs_ = __nccwpck_require__(5747);
 var external_path_ = __nccwpck_require__(5622);
 // EXTERNAL MODULE: ./node_modules/@expo/spawn-async/index.js
 var spawn_async = __nccwpck_require__(5562);
-var spawn_async_default = /*#__PURE__*/__nccwpck_require__.n(spawn_async);
 // EXTERNAL MODULE: ./node_modules/xml-js/lib/index.js
 var lib = __nccwpck_require__(8821);
 ;// CONCATENATED MODULE: ./src/filesystemUtils.ts
@@ -16983,7 +16982,7 @@ function runBuildCommand(widgetStructure) {
 function lists(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { stdout } = yield spawn_async_default()("du", ["-sh", "*"]);
+            const { stdout } = yield spawnAsync("du", ["-sh", "*"]);
             console.log(`stdout`, stdout);
             return stdout;
         }
@@ -17258,7 +17257,7 @@ function run() {
             }
             console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
             console.log(`build`, build);
-            yield lists(widgetStructure);
+            // await lists(widgetStructure);
             // Folder name where Widget is Build
             const upload = yield uploadBuildFolderToRelease(action_github, widgetStructure, jsonVersion, release);
             return upload;

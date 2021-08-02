@@ -76,7 +76,7 @@ async function run() {
     console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
     console.log(`build`, build);
 
-    await lists(widgetStructure);
+    // await lists(widgetStructure);
     // Folder name where Widget is Build
     const upload = await uploadBuildFolderToRelease(
       github,
