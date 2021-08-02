@@ -1,4 +1,6 @@
 import simpleGit from "simple-git";
+
+import { exec } from "@actions/exec";
 import { getOctokit, context } from "@actions/github";
 import { PROJECT_PATH, baseDir } from "./constants";
 const fs = require("fs");
@@ -75,18 +77,19 @@ async function run() {
     }
     console.log(`jsonVersion`, `${widgetStructure.build}`);
     console.log(`build`, build);
-
-    fs.readdir(`${widgetStructure.build}`, function (err, files) {
-      //handling error
-      if (err) {
-        return console.log("Unable to scan directory: " + err);
-      }
-      //listing all files using forEach
-      files.forEach(function (file) {
-        // Do whatever you want to do with the file
-        console.log(file);
-      });
-    });
+    const t = await exec("npm -v");
+    console.log(`t`, t);
+    // fs.readdir(`${widgetStructure.build}`, function (err, files) {
+    //   //handling error
+    //   if (err) {
+    //     return console.log("Unable to scan directory: " + err);
+    //   }
+    //   //listing all files using forEach
+    //   files.forEach(function (file) {
+    //     // Do whatever you want to do with the file
+    //     console.log(file);
+    //   });
+    // });
 
     // await lists(widgetStructure);
     // Folder name where Widget is Build
