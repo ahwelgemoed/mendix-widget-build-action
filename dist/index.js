@@ -1320,7 +1320,7 @@ exports.default = spawnAsync;
 /***/ 5562:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-/* unused reexport */ __nccwpck_require__(4927).default;
+module.exports = __nccwpck_require__(4927).default;
 
 
 /***/ }),
@@ -16933,6 +16933,7 @@ var external_fs_ = __nccwpck_require__(5747);
 var external_path_ = __nccwpck_require__(5622);
 // EXTERNAL MODULE: ./node_modules/@expo/spawn-async/index.js
 var spawn_async = __nccwpck_require__(5562);
+var spawn_async_default = /*#__PURE__*/__nccwpck_require__.n(spawn_async);
 // EXTERNAL MODULE: ./node_modules/xml-js/lib/index.js
 var lib = __nccwpck_require__(8821);
 ;// CONCATENATED MODULE: ./src/filesystemUtils.ts
@@ -16948,9 +16949,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-// import spawn from "await-spawn";
 
-const { spawn } = __nccwpck_require__(3129);
 const core = __nccwpck_require__(2186);
 function _readPackageJSON(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -16962,17 +16961,12 @@ function _readPackageJSON(widgetStructure) {
 function runBuildCommand(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const bl = yield spawn("ls", ["-al"]);
-            console.log(bl.toString());
-            const xx = yield spawn(`npm`);
-            console.log(xx.toString());
-            // `--prefix ${widgetStructure.base}`,
-            return xx;
-            // const { stdout } = await spawnAsync("yarn", [
-            //   "build",
-            //   "--prefix",
-            //   widgetStructure.base,
-            // ]);
+            const { stdout } = yield spawn_async_default()("npm", [
+                "build",
+                "--prefix",
+                widgetStructure.base,
+            ]);
+            return stdout;
         }
         catch (error) {
             console.log(`error`, error);
@@ -17209,6 +17203,7 @@ var action_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _a
 
 
 
+const fs = __nccwpck_require__(5747);
 
 
 
@@ -17257,6 +17252,17 @@ function run() {
             }
             console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
             console.log(`build`, build);
+            fs.readdir(`${widgetStructure.build}/${jsonVersion}`, function (err, files) {
+                //handling error
+                if (err) {
+                    return console.log("Unable to scan directory: " + err);
+                }
+                //listing all files using forEach
+                files.forEach(function (file) {
+                    // Do whatever you want to do with the file
+                    console.log(file);
+                });
+            });
             // await lists(widgetStructure);
             // Folder name where Widget is Build
             const upload = yield uploadBuildFolderToRelease(action_github, widgetStructure, jsonVersion, release);
