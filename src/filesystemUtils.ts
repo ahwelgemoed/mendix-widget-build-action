@@ -1,10 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import spawnAsync from "@expo/spawn-async";
-const spawn = require("await-spawn");
-
+import spawn from "await-spawn";
 import * as convertXML from "xml-js";
-import { spawnSync } from "child_process";
 
 const core = require("@actions/core");
 
@@ -27,23 +25,28 @@ export async function runBuildCommand(
   try {
     const bl = await spawn("ls", ["-al"]);
     console.log(bl.toString());
-    const xx = await spawn(`npm run build`);
+    const xx = await spawn(`npm`, [
+      "run build",
+      `--prefix ${widgetStructure.base}`,
+    ]);
     console.log(xx.toString());
 
     return xx;
+
+    // const { stdout } = await spawnAsync("yarn", [
+    //   "build",
+    //   "--prefix",
+    //   widgetStructure.base,
+    // ]);
   } catch (error) {
     console.log(`error`, error);
   }
 }
 export async function lists(widgetStructure: WidgetFolderStructureInterface) {
   try {
-    const testFolder = widgetStructure.base;
-    // const fs = require('fs');
-    fs.readdir(`${testFolder}/dist`, (err, files) => {
-      files.forEach((file) => {
-        console.log("🔥", file);
-      });
-    });
+    const { stdout } = await spawnAsync("du", ["-sh", "*"]);
+    console.log(`stdout`, stdout);
+    return stdout;
   } catch (error) {
     console.log(`error`, error);
   }
