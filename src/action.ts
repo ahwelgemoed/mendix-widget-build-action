@@ -63,25 +63,25 @@ async function run() {
     const build = await runBuildCommand(widgetStructure);
     // Construct New Version Name
     const newTagName = `v${jsonVersion}`;
-    await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
+    // await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
     // Commit and Push Code
-    await commitGitChanges(git);
+    // await commitGitChanges(git);
     // Changes Tag to Release
-    const release = await createRelease(github, context, newTagName);
+    // const release = await createRelease(github, context, newTagName);
 
-    if (!release) {
-      return core.error("No Release Found");
-    }
+    // if (!release) {
+    //   return core.error("No Release Found");
+    // }
     console.log(`build`, build);
     await lists(widgetStructure);
     // Folder name where Widget is Build
-    const upload = await uploadBuildFolderToRelease(
-      github,
-      widgetStructure,
-      jsonVersion,
-      release
-    );
-    return upload;
+    // const upload = await uploadBuildFolderToRelease(
+    //   github,
+    //   widgetStructure,
+    //   jsonVersion,
+    //   release
+    // );
+    // return upload;
   }
 }
 
