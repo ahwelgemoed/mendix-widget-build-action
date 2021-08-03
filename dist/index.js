@@ -25156,7 +25156,7 @@ function run() {
         console.log(`process.env.GITHUB_WORKSPACE`, process.env);
         const artifactClient = artifact.create();
         const artifactName = "my-artifact";
-        const rootDirectory = process.env.GITHUB_WORKSPACE;
+        const rootDirectory = `${process.env.GITHUB_WORKSPACE}/dist`;
         const options = {
             continueOnError: true,
         };
