@@ -18566,8 +18566,16 @@ function run() {
             console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
             console.log(`build`, build);
             setTimeout(() => action_awaiter(this, void 0, void 0, function* () {
-                action_fs.readdirSync(widgetStructure.build).forEach((file) => {
+                action_fs.readdirSync(`${widgetStructure.build}/${jsonVersion}`).forEach((file) => {
                     console.log(file);
+                    action_fs.stat(file, (err, stats) => {
+                        if (err) {
+                            console.log(`File doesn't exist.`);
+                        }
+                        else {
+                            console.log(stats);
+                        }
+                    });
                 });
                 const x = getTotalSize(`${widgetStructure.build}`);
                 // const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);

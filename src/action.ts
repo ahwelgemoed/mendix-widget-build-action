@@ -78,9 +78,18 @@ async function run() {
     console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
     console.log(`build`, build);
     setTimeout(async () => {
-      fs.readdirSync(widgetStructure.build).forEach((file) => {
-        console.log(file);
-      });
+      fs.readdirSync(`${widgetStructure.build}/${jsonVersion}`).forEach(
+        (file) => {
+          console.log(file);
+          fs.stat(file, (err, stats) => {
+            if (err) {
+              console.log(`File doesn't exist.`);
+            } else {
+              console.log(stats);
+            }
+          });
+        }
+      );
 
       const x = getTotalSize(`${widgetStructure.build}`);
       // const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
