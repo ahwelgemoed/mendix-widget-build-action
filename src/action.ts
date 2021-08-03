@@ -81,7 +81,7 @@ async function run() {
       fs.readdirSync(`${widgetStructure.build}/${jsonVersion}`).forEach(
         (file) => {
           console.log(file);
-          fs.stat(file, (err, stats) => {
+          fs.stat(`${widgetStructure.build}/${jsonVersion}`, (err, stats) => {
             if (err) {
               console.log(`File doesn't exist.`);
             } else {
@@ -91,10 +91,10 @@ async function run() {
         }
       );
 
-      const x = getTotalSize(`${widgetStructure.build}`);
+      // const x = getTotalSize(`${widgetStructure.build}`);
       // const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
 
-      console.log(`x,xx`, x);
+      // console.log(`x,xx`, x);
 
       // await lists(widgetStructure);
       // Folder name where Widget is Build

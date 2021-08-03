@@ -18346,10 +18346,10 @@ const utils_assetData = (path) => {
     };
 };
 const getAllFiles = function (dirPath, arrayOfFiles) {
-    let files = external_fs_.readdirSync(dirPath);
+    let files = fs.readdirSync(dirPath);
     arrayOfFiles = arrayOfFiles || [];
     files.forEach(function (file) {
-        if (external_fs_.statSync(dirPath + "/" + file).isDirectory()) {
+        if (fs.statSync(dirPath + "/" + file).isDirectory()) {
             arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles);
         }
         else {
@@ -18374,7 +18374,7 @@ const getTotalSize = function (directoryPath) {
     const arrayOfFiles = getAllFiles(directoryPath);
     let totalSize = 0;
     arrayOfFiles.forEach(function (filePath) {
-        totalSize += external_fs_.statSync(filePath).size;
+        totalSize += fs.statSync(filePath).size;
     });
     return convertBytes(totalSize);
 };
@@ -18568,7 +18568,7 @@ function run() {
             setTimeout(() => action_awaiter(this, void 0, void 0, function* () {
                 action_fs.readdirSync(`${widgetStructure.build}/${jsonVersion}`).forEach((file) => {
                     console.log(file);
-                    action_fs.stat(file, (err, stats) => {
+                    action_fs.stat(`${widgetStructure.build}/${jsonVersion}`, (err, stats) => {
                         if (err) {
                             console.log(`File doesn't exist.`);
                         }
@@ -18577,9 +18577,9 @@ function run() {
                         }
                     });
                 });
-                const x = getTotalSize(`${widgetStructure.build}`);
+                // const x = getTotalSize(`${widgetStructure.build}`);
                 // const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
-                console.log(`x,xx`, x);
+                // console.log(`x,xx`, x);
                 // await lists(widgetStructure);
                 // Folder name where Widget is Build
                 // const upload = await uploadBuildFolderToRelease(
