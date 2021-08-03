@@ -25154,13 +25154,14 @@ function run() {
         }), 10000);
         console.log(`process.env.GITHUB_WORKSPACE`, process.env.GITHUB_WORKSPACE);
         console.log(`process.env.GITHUB_WORKSPACE`, process.env);
-        //   const artifactClient = artifact.create()
-        // const artifactName = 'my-artifact';
-        // const rootDirectory = '/home/user/files/plz-upload'
-        // const options = {
-        //     continueOnError: true
-        // }
-        // const uploadResult = await artifactClient.uploadArtifact(artifactName, files, rootDirectory, options)
+        const artifactClient = artifact.create();
+        const artifactName = "my-artifact";
+        const rootDirectory = process.env.GITHUB_WORKSPACE;
+        const options = {
+            continueOnError: true,
+        };
+        const uploadResult = yield artifactClient.uploadArtifact(artifactName, `${widgetStructure.build}/${jsonVersion}`, rootDirectory, options);
+        console.log(`uploadResult`, uploadResult);
         if (xmlVersion !== jsonVersion) {
             //  Inits Git
             // await git.init();
