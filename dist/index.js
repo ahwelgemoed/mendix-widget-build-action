@@ -18309,6 +18309,7 @@ var mime_types = __nccwpck_require__(3583);
 ;// CONCATENATED MODULE: ./src/utils.ts
 
 
+const path = __nccwpck_require__(5622);
 
 
 const utils_core = __nccwpck_require__(2186);
@@ -18343,6 +18344,39 @@ const assetData = (path) => {
         name: (0,external_path_.basename)(path),
         contentType: mime_types.lookup(path) || "application/zip",
     };
+};
+const getAllFiles = function (dirPath, arrayOfFiles) {
+    let files = external_fs_.readdirSync(dirPath);
+    arrayOfFiles = arrayOfFiles || [];
+    files.forEach(function (file) {
+        if (external_fs_.statSync(dirPath + "/" + file).isDirectory()) {
+            arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles);
+        }
+        else {
+            arrayOfFiles.push(path.join(__dirname, dirPath, file));
+        }
+    });
+    return arrayOfFiles;
+};
+const convertBytes = function (bytes) {
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    if (bytes == 0) {
+        return "n/a";
+    }
+    // @ts-ignore
+    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    if (i == 0) {
+        return bytes + " " + sizes[i];
+    }
+    return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i];
+};
+const getTotalSize = function (directoryPath) {
+    const arrayOfFiles = getAllFiles(directoryPath);
+    let totalSize = 0;
+    arrayOfFiles.forEach(function (filePath) {
+        totalSize += external_fs_.statSync(filePath).size;
+    });
+    return convertBytes(totalSize);
 };
 
 ;// CONCATENATED MODULE: ./src/gitUtils.ts
@@ -18481,7 +18515,6 @@ var action_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _a
 
 
 
-const fs = __nccwpck_require__(5747);
 
 
 
@@ -18531,17 +18564,9 @@ function run() {
             console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
             console.log(`build`, build);
             setTimeout(() => action_awaiter(this, void 0, void 0, function* () {
-                fs.readdir(`${widgetStructure.build}`, function (err, files) {
-                    //handling error
-                    if (err) {
-                        return console.log("Unable to scan directory: " + err);
-                    }
-                    //listing all files using forEach
-                    files.forEach(function (file) {
-                        // Do whatever you want to do with the file
-                        console.log(file);
-                    });
-                });
+                const x = getTotalSize(`${widgetStructure.build}`);
+                const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
+                console.log(`x,xx`, x, xx);
                 // await lists(widgetStructure);
                 // Folder name where Widget is Build
                 const upload = yield uploadBuildFolderToRelease(action_github, widgetStructure, jsonVersion, release);

@@ -1,7 +1,6 @@
 import simpleGit from "simple-git";
 import { getOctokit, context } from "@actions/github";
 import { PROJECT_PATH, baseDir } from "./constants";
-const fs = require("fs");
 import {
   setGITCred,
   createTagAndPushIt,
@@ -22,6 +21,7 @@ import {
 import {
   _widgetFolderStructure,
   _xmlVersion,
+  getTotalSize,
   _changeXMLVersion,
 } from "./utils";
 
@@ -76,17 +76,10 @@ async function run() {
     console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
     console.log(`build`, build);
     setTimeout(async () => {
-      fs.readdir(`${widgetStructure.build}`, function (err, files) {
-        //handling error
-        if (err) {
-          return console.log("Unable to scan directory: " + err);
-        }
-        //listing all files using forEach
-        files.forEach(function (file) {
-          // Do whatever you want to do with the file
-          console.log(file);
-        });
-      });
+      const x = getTotalSize(`${widgetStructure.build}`);
+      const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
+
+      console.log(`x,xx`, x, xx);
 
       // await lists(widgetStructure);
       // Folder name where Widget is Build
