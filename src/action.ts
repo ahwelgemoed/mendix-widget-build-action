@@ -1,6 +1,4 @@
 import simpleGit from "simple-git";
-
-import { exec } from "@actions/exec";
 import { getOctokit, context } from "@actions/github";
 import { PROJECT_PATH, baseDir } from "./constants";
 const fs = require("fs");
@@ -62,44 +60,46 @@ async function run() {
     //  Converts Js back to xml and writes xml file to disk
     await _writePackageXML(widgetStructure, newRawPackageXML);
     // Build New Version
-    // const build = await runBuildCommand(widgetStructure);
+    const build = await runBuildCommand(widgetStructure);
     await delay(10000);
     // Construct New Version Name
-    // const newTagName = `v${jsonVersion}`;
-    // await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
-    // // Commit and Push Code
-    // await commitGitChanges(git);
-    // // Changes Tag to Release
-    // const release = await createRelease(github, context, newTagName);
+    const newTagName = `v${jsonVersion}`;
+    await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
+    // Commit and Push Code
+    await commitGitChanges(git);
+    // Changes Tag to Release
+    const release = await createRelease(github, context, newTagName);
 
-    // if (!release) {
-    //   return core.error("No Release Found");
-    // }
-    // console.log(`jsonVersion`, `${widgetStructure.build}`);
-    // console.log(`build`, build);
-    const t = await exec("npm -v");
-    console.log(`t`, t);
-    // fs.readdir(`${widgetStructure.build}`, function (err, files) {
-    //   //handling error
-    //   if (err) {
-    //     return console.log("Unable to scan directory: " + err);
-    //   }
-    //   //listing all files using forEach
-    //   files.forEach(function (file) {
-    //     // Do whatever you want to do with the file
-    //     console.log(file);
-    //   });
-    // });
+    if (!release) {
+      return core.error("No Release Found");
+    }
+    console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
+    console.log(`build`, build);
+
+    fs.readdir(
+      `${widgetStructure.build}/${jsonVersion}`,
+      function (err, files) {
+        //handling error
+        if (err) {
+          return console.log("Unable to scan directory: " + err);
+        }
+        //listing all files using forEach
+        files.forEach(function (file) {
+          // Do whatever you want to do with the file
+          console.log(file);
+        });
+      }
+    );
 
     // await lists(widgetStructure);
     // Folder name where Widget is Build
-    // const upload = await uploadBuildFolderToRelease(
-    //   github,
-    //   widgetStructure,
-    //   jsonVersion,
-    //   release
-    // );
-    // return upload;
+    const upload = await uploadBuildFolderToRelease(
+      github,
+      widgetStructure,
+      jsonVersion,
+      release
+    );
+    return upload;
   }
 }
 

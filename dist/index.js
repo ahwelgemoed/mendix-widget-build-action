@@ -18196,8 +18196,6 @@ __nccwpck_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: ./node_modules/simple-git/src/index.js
 var src = __nccwpck_require__(1477);
 var src_default = /*#__PURE__*/__nccwpck_require__.n(src);
-// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
-var exec = __nccwpck_require__(1514);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./src/constants.ts
@@ -18208,6 +18206,8 @@ const baseDir = process.env.GITHUB_WORKSPACE;
 var external_fs_ = __nccwpck_require__(5747);
 // EXTERNAL MODULE: external "path"
 var external_path_ = __nccwpck_require__(5622);
+// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
+var exec = __nccwpck_require__(1514);
 // EXTERNAL MODULE: ./node_modules/@expo/spawn-async/index.js
 var spawn_async = __nccwpck_require__(5562);
 // EXTERNAL MODULE: ./node_modules/xml-js/lib/index.js
@@ -18226,6 +18226,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
+
 const core = __nccwpck_require__(2186);
 function _readPackageJSON(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -18237,12 +18238,13 @@ function _readPackageJSON(widgetStructure) {
 function runBuildCommand(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { stdout } = yield spawnAsync("npm", [
+            const t = yield (0,exec.exec)("npm", [
+                "run",
                 "build",
                 "--prefix",
                 widgetStructure.base,
             ]);
-            return stdout;
+            return t;
         }
         catch (error) {
             console.log(`error`, error);
@@ -18290,10 +18292,10 @@ function _writePackageXML(widgetStructure, rawNewPackageXML) {
         }
     });
 }
-function filesystemUtils_findBuildFiles(folderPath) {
+function findBuildFiles(folderPath) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const filesArray = yield fs.readdirSync(path.resolve(folderPath), "utf8");
+            const filesArray = yield external_fs_.readdirSync(external_path_.resolve(folderPath), "utf8");
             return filesArray;
         }
         catch (error) {
@@ -18335,11 +18337,11 @@ function _changeXMLVersion(rawXML, version) {
     y.elements[0].elements[0].attributes.version = version;
     return y;
 }
-const utils_assetData = (path) => {
+const assetData = (path) => {
     return {
-        fileStream: fs.readFileSync(path),
-        name: basename(path),
-        contentType: mime.lookup(path) || "application/zip",
+        fileStream: external_fs_.readFileSync(path),
+        name: (0,external_path_.basename)(path),
+        contentType: mime_types.lookup(path) || "application/zip",
     };
 };
 
@@ -18445,7 +18447,7 @@ function uploadBuildFolderToRelease(github, widgetStructure, jsonVersion, releas
                 // Set Headers for Upload
                 const headers = {
                     "content-type": contentType,
-                    "content-length": fs.statSync(filePath).size,
+                    "content-length": external_fs_.statSync(filePath).size,
                 };
                 // Uploads Built to Release
                 const uploadAssetResponse = yield github.repos.uploadReleaseAsset(
@@ -18479,8 +18481,7 @@ var action_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _a
 
 
 
-
-const action_fs = __nccwpck_require__(5747);
+const fs = __nccwpck_require__(5747);
 
 
 
@@ -18515,42 +18516,35 @@ function run() {
             //  Converts Js back to xml and writes xml file to disk
             yield _writePackageXML(widgetStructure, newRawPackageXML);
             // Build New Version
-            // const build = await runBuildCommand(widgetStructure);
+            const build = yield runBuildCommand(widgetStructure);
             yield delay(10000);
             // Construct New Version Name
-            // const newTagName = `v${jsonVersion}`;
-            // await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
-            // // Commit and Push Code
-            // await commitGitChanges(git);
-            // // Changes Tag to Release
-            // const release = await createRelease(github, context, newTagName);
-            // if (!release) {
-            //   return core.error("No Release Found");
-            // }
-            // console.log(`jsonVersion`, `${widgetStructure.build}`);
-            // console.log(`build`, build);
-            const t = yield (0,exec.exec)("npm -v");
-            console.log(`t`, t);
-            // fs.readdir(`${widgetStructure.build}`, function (err, files) {
-            //   //handling error
-            //   if (err) {
-            //     return console.log("Unable to scan directory: " + err);
-            //   }
-            //   //listing all files using forEach
-            //   files.forEach(function (file) {
-            //     // Do whatever you want to do with the file
-            //     console.log(file);
-            //   });
-            // });
+            const newTagName = `v${jsonVersion}`;
+            yield createTagAndPushIt(action_github, github.context, GITHUB_SHA, newTagName);
+            // Commit and Push Code
+            yield commitGitChanges(git);
+            // Changes Tag to Release
+            const release = yield createRelease(action_github, github.context, newTagName);
+            if (!release) {
+                return action_core.error("No Release Found");
+            }
+            console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
+            console.log(`build`, build);
+            fs.readdir(`${widgetStructure.build}/${jsonVersion}`, function (err, files) {
+                //handling error
+                if (err) {
+                    return console.log("Unable to scan directory: " + err);
+                }
+                //listing all files using forEach
+                files.forEach(function (file) {
+                    // Do whatever you want to do with the file
+                    console.log(file);
+                });
+            });
             // await lists(widgetStructure);
             // Folder name where Widget is Build
-            // const upload = await uploadBuildFolderToRelease(
-            //   github,
-            //   widgetStructure,
-            //   jsonVersion,
-            //   release
-            // );
-            // return upload;
+            const upload = yield uploadBuildFolderToRelease(action_github, widgetStructure, jsonVersion, release);
+            return upload;
         }
     });
 }
