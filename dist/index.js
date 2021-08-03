@@ -18539,6 +18539,7 @@ function run() {
         const packageXML = yield _readPackageXML(widgetStructure);
         // Parses .xml and and Returns package.xml Version
         const xmlVersion = _xmlVersion(packageXML);
+        console.log("🔥");
         if (xmlVersion !== jsonVersion) {
             //  Inits Git
             yield git.init();
