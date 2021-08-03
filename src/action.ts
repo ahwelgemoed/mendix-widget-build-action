@@ -78,7 +78,7 @@ async function run() {
     console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
     console.log(`build`, build);
     setTimeout(async () => {
-      fs.readdirSync(widgetStructure.base).forEach((file) => {
+      fs.readdirSync(widgetStructure.build).forEach((file) => {
         console.log(file);
       });
 

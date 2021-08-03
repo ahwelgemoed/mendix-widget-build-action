@@ -18566,7 +18566,7 @@ function run() {
             console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
             console.log(`build`, build);
             setTimeout(() => action_awaiter(this, void 0, void 0, function* () {
-                action_fs.readdirSync(widgetStructure.base).forEach((file) => {
+                action_fs.readdirSync(widgetStructure.build).forEach((file) => {
                     console.log(file);
                 });
                 const x = getTotalSize(`${widgetStructure.build}`);
