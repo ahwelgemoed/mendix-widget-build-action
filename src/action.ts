@@ -41,66 +41,68 @@ async function run() {
 
   const packageJSON = await _readPackageJSON(widgetStructure);
 
+  const build = await runBuildCommand(widgetStructure);
+
   // Gets Version in Package.json
-  const jsonVersion = packageJSON.version;
-  // Gets Name in Package.json
-  const packagePackageName = packageJSON.name;
-  // Reads package.xml
-  const packageXML = await _readPackageXML(widgetStructure);
-  // Parses .xml and and Returns package.xml Version
-  const xmlVersion = _xmlVersion(packageXML);
+  // const jsonVersion = packageJSON.version;
+  // // Gets Name in Package.json
+  // const packagePackageName = packageJSON.name;
+  // // Reads package.xml
+  // const packageXML = await _readPackageXML(widgetStructure);
+  // // Parses .xml and and Returns package.xml Version
+  // const xmlVersion = _xmlVersion(packageXML);
 
-  if (xmlVersion !== jsonVersion) {
-    //  Inits Git
-    await git.init();
-    // Set Git Credentials
-    await setGITCred(git);
-    // Update XML to match Package.json and
-    const newRawPackageXML = await _changeXMLVersion(packageXML, jsonVersion);
-    //  Converts Js back to xml and writes xml file to disk
-    await _writePackageXML(widgetStructure, newRawPackageXML);
-    // Build New Version
-    const build = await runBuildCommand(widgetStructure);
-    await delay(10000);
-    // Construct New Version Name
-    const newTagName = `v${jsonVersion}`;
-    await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
-    // Commit and Push Code
-    await commitGitChanges(git);
-    // Changes Tag to Release
-    const release = await createRelease(github, context, newTagName);
+  // if (xmlVersion !== jsonVersion) {
+  //   //  Inits Git
+  //   await git.init();
+  //   // Set Git Credentials
+  //   await setGITCred(git);
+  //   // Update XML to match Package.json and
+  //   const newRawPackageXML = await _changeXMLVersion(packageXML, jsonVersion);
+  //   //  Converts Js back to xml and writes xml file to disk
+  //   await _writePackageXML(widgetStructure, newRawPackageXML);
+  //   // Build New Version
+  //   const build = await runBuildCommand(widgetStructure);
+  //   await delay(10000);
+  //   // Construct New Version Name
+  //   const newTagName = `v${jsonVersion}`;
+  //   await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
+  //   // Commit and Push Code
+  //   await commitGitChanges(git);
+  //   // Changes Tag to Release
+  //   const release = await createRelease(github, context, newTagName);
 
-    if (!release) {
-      return core.error("No Release Found");
-    }
-    console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
-    console.log(`build`, build);
+  //   if (!release) {
+  //     return core.error("No Release Found");
+  //   }
+  //   console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
+  //   console.log(`build`, build);
 
-    fs.readdir(
-      `${widgetStructure.build}/${jsonVersion}`,
-      function (err, files) {
-        //handling error
-        if (err) {
-          return console.log("Unable to scan directory: " + err);
-        }
-        //listing all files using forEach
-        files.forEach(function (file) {
-          // Do whatever you want to do with the file
-          console.log(file);
-        });
-      }
-    );
+  //   fs.readdir(
+  //     `${widgetStructure.build}/${jsonVersion}`,
+  //     function (err, files) {
+  //       //handling error
+  //       if (err) {
+  //         return console.log("Unable to scan directory: " + err);
+  //       }
+  //       //listing all files using forEach
+  //       files.forEach(function (file) {
+  //         // Do whatever you want to do with the file
+  //         console.log(file);
+  //       });
+  //     }
+  //   );
 
-    // await lists(widgetStructure);
-    // Folder name where Widget is Build
-    const upload = await uploadBuildFolderToRelease(
-      github,
-      widgetStructure,
-      jsonVersion,
-      release
-    );
-    return upload;
-  }
+  //   // await lists(widgetStructure);
+  //   // Folder name where Widget is Build
+  //   const upload = await uploadBuildFolderToRelease(
+  //     github,
+  //     widgetStructure,
+  //     jsonVersion,
+  //     release
+  //   );
+  //   return upload;
+  // }
 }
 
 run();

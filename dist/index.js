@@ -18273,18 +18273,18 @@ function _readFileAsync(packagesPath) {
 }
 function _readPackageXML(widgetStructure) {
     return __awaiter(this, void 0, void 0, function* () {
-        const rawPackageXML = yield external_fs_.readFileSync(external_path_.resolve(widgetStructure.packageXML), "utf8");
+        const rawPackageXML = yield fs.readFileSync(path.resolve(widgetStructure.packageXML), "utf8");
         var options = { ignoreComment: true, alwaysChildren: true };
-        var result = lib.xml2js(rawPackageXML, options);
+        var result = convertXML.xml2js(rawPackageXML, options);
         return result;
     });
 }
 function _writePackageXML(widgetStructure, rawNewPackageXML) {
     return __awaiter(this, void 0, void 0, function* () {
         const options = { compact: false, ignoreComment: true, spaces: 4 };
-        const result = yield lib.js2xml(rawNewPackageXML, options);
+        const result = yield convertXML.js2xml(rawNewPackageXML, options);
         try {
-            yield external_fs_.writeFileSync(widgetStructure.packageXML, result);
+            yield fs.writeFileSync(widgetStructure.packageXML, result);
             return;
         }
         catch (error) {
@@ -18295,7 +18295,7 @@ function _writePackageXML(widgetStructure, rawNewPackageXML) {
 function findBuildFiles(folderPath) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const filesArray = yield external_fs_.readdirSync(external_path_.resolve(folderPath), "utf8");
+            const filesArray = yield fs.readdirSync(path.resolve(folderPath), "utf8");
             return filesArray;
         }
         catch (error) {
@@ -18339,134 +18339,11 @@ function _changeXMLVersion(rawXML, version) {
 }
 const assetData = (path) => {
     return {
-        fileStream: external_fs_.readFileSync(path),
-        name: (0,external_path_.basename)(path),
-        contentType: mime_types.lookup(path) || "application/zip",
+        fileStream: fs.readFileSync(path),
+        name: basename(path),
+        contentType: mime.lookup(path) || "application/zip",
     };
 };
-
-;// CONCATENATED MODULE: ./src/gitUtils.ts
-var gitUtils_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-
-
-
-const gitUtils_core = __nccwpck_require__(2186);
-function setGITCred(git) {
-    return gitUtils_awaiter(this, void 0, void 0, function* () {
-        const COMMIT_AUTHOR_NAME = gitUtils_core.getInput("bot_author_name") || "BOTTY";
-        const COMMIT_AUTHOR_EMAIL = gitUtils_core.getInput("bot_author_email") || "BOT@BOTTY.inc";
-        try {
-            yield git.addConfig("user.name", COMMIT_AUTHOR_NAME);
-            yield git.addConfig("user.email", COMMIT_AUTHOR_EMAIL);
-            return;
-        }
-        catch (error) {
-            console.log(`error`, error);
-        }
-    });
-}
-function createRelease(github, context, tag) {
-    return gitUtils_awaiter(this, void 0, void 0, function* () {
-        try {
-            const { owner, repo } = context.repo;
-            const { data } = yield github.repos.createRelease({
-                owner,
-                repo,
-                tag_name: tag,
-            });
-            return data;
-        }
-        catch (error) {
-            gitUtils_core.error(`Error @ createRelease ${error}`);
-        }
-    });
-}
-function commitGitChanges(git) {
-    return gitUtils_awaiter(this, void 0, void 0, function* () {
-        const BOT_MESSAGE = gitUtils_core.getInput("bot_commit_message") || "BOT COMMIT";
-        const COMMIT_AUTHOR_NAME = gitUtils_core.getInput("bot_author_name") || "BOTTY";
-        const COMMIT_AUTHOR_EMAIL = gitUtils_core.getInput("bot_author_email") || "BOT@BOTTY.inc";
-        const BRANCH_TO_PUSH_TO = gitUtils_core.getInput("branch_to_push_to") || "main";
-        try {
-            yield git.add("./*", (err) => {
-                if (err) {
-                    gitUtils_core.error(`Error @ add ${err}`);
-                }
-            });
-            const x = yield git.commit(BOT_MESSAGE, undefined, {
-                "--author": `"${COMMIT_AUTHOR_NAME} <${COMMIT_AUTHOR_EMAIL}>"`,
-            }, (err) => {
-                if (err) {
-                    gitUtils_core.error(`Error @ commit ${err}`);
-                }
-            });
-            yield git.push("origin", BRANCH_TO_PUSH_TO, ["--force"], (err) => {
-                if (err) {
-                    gitUtils_core.error(`Error @ push ${err}`);
-                }
-            });
-            return;
-        }
-        catch (error) {
-            gitUtils_core.error(`Error @ commitGitChanges ${error}`);
-        }
-    });
-}
-function createTagAndPushIt(github, context, sha, tag) {
-    return gitUtils_awaiter(this, void 0, void 0, function* () {
-        const BOT_MESSAGE = gitUtils_core.getInput("bot_commit_message") || "BOT COMMIT";
-        try {
-            const annotatedTag = yield github.git.createTag(Object.assign(Object.assign({}, context.repo), { tag: tag, message: BOT_MESSAGE, object: sha, type: "commit" }));
-            yield github.git.createRef(Object.assign(Object.assign({}, context.repo), { ref: `refs/tags/${tag}`, sha: annotatedTag ? annotatedTag.data.sha : sha }));
-            return annotatedTag;
-        }
-        catch (error) {
-            gitUtils_core.error(`Error @ createTagAndPushIt ${error}`);
-        }
-    });
-}
-function uploadBuildFolderToRelease(github, widgetStructure, jsonVersion, release) {
-    return gitUtils_awaiter(this, void 0, void 0, function* () {
-        try {
-            const FOLDER_WHERE_RELEASE_IS = `${widgetStructure.build}/${jsonVersion}`;
-            // All File names in build folder
-            const filesArray = yield findBuildFiles(FOLDER_WHERE_RELEASE_IS);
-            // Loop over all files in Widget Build
-            for (const file of filesArray) {
-                // Built widget path
-                const filePath = `${FOLDER_WHERE_RELEASE_IS}/${file}`;
-                const { name, fileStream, contentType } = assetData(filePath);
-                // Set Headers for Upload
-                const headers = {
-                    "content-type": contentType,
-                    "content-length": external_fs_.statSync(filePath).size,
-                };
-                // Uploads Built to Release
-                const uploadAssetResponse = yield github.repos.uploadReleaseAsset(
-                // @ts-ignore
-                {
-                    url: release.upload_url,
-                    headers,
-                    name,
-                    file: fileStream,
-                });
-                gitUtils_core.info(`🥊 Uploaded ${file}`);
-                return uploadAssetResponse;
-            }
-        }
-        catch (error) {
-            gitUtils_core.error(`Error @ getAllTags ${error}`);
-        }
-    });
-}
 
 ;// CONCATENATED MODULE: ./src/action.ts
 var action_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -18481,8 +18358,7 @@ var action_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _a
 
 
 
-const fs = __nccwpck_require__(5747);
-
+const action_fs = __nccwpck_require__(5747);
 
 
 const action_core = __nccwpck_require__(2186);
@@ -18498,54 +18374,63 @@ function run() {
         }
         const widgetStructure = _widgetFolderStructure();
         const packageJSON = yield _readPackageJSON(widgetStructure);
+        const build = yield runBuildCommand(widgetStructure);
         // Gets Version in Package.json
-        const jsonVersion = packageJSON.version;
-        // Gets Name in Package.json
-        const packagePackageName = packageJSON.name;
-        // Reads package.xml
-        const packageXML = yield _readPackageXML(widgetStructure);
-        // Parses .xml and and Returns package.xml Version
-        const xmlVersion = _xmlVersion(packageXML);
-        if (xmlVersion !== jsonVersion) {
-            //  Inits Git
-            yield git.init();
-            // Set Git Credentials
-            yield setGITCred(git);
-            // Update XML to match Package.json and
-            const newRawPackageXML = yield _changeXMLVersion(packageXML, jsonVersion);
-            //  Converts Js back to xml and writes xml file to disk
-            yield _writePackageXML(widgetStructure, newRawPackageXML);
-            // Build New Version
-            const build = yield runBuildCommand(widgetStructure);
-            yield delay(10000);
-            // Construct New Version Name
-            const newTagName = `v${jsonVersion}`;
-            yield createTagAndPushIt(action_github, github.context, GITHUB_SHA, newTagName);
-            // Commit and Push Code
-            yield commitGitChanges(git);
-            // Changes Tag to Release
-            const release = yield createRelease(action_github, github.context, newTagName);
-            if (!release) {
-                return action_core.error("No Release Found");
-            }
-            console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
-            console.log(`build`, build);
-            fs.readdir(`${widgetStructure.build}/${jsonVersion}`, function (err, files) {
-                //handling error
-                if (err) {
-                    return console.log("Unable to scan directory: " + err);
-                }
-                //listing all files using forEach
-                files.forEach(function (file) {
-                    // Do whatever you want to do with the file
-                    console.log(file);
-                });
-            });
-            // await lists(widgetStructure);
-            // Folder name where Widget is Build
-            const upload = yield uploadBuildFolderToRelease(action_github, widgetStructure, jsonVersion, release);
-            return upload;
-        }
+        // const jsonVersion = packageJSON.version;
+        // // Gets Name in Package.json
+        // const packagePackageName = packageJSON.name;
+        // // Reads package.xml
+        // const packageXML = await _readPackageXML(widgetStructure);
+        // // Parses .xml and and Returns package.xml Version
+        // const xmlVersion = _xmlVersion(packageXML);
+        // if (xmlVersion !== jsonVersion) {
+        //   //  Inits Git
+        //   await git.init();
+        //   // Set Git Credentials
+        //   await setGITCred(git);
+        //   // Update XML to match Package.json and
+        //   const newRawPackageXML = await _changeXMLVersion(packageXML, jsonVersion);
+        //   //  Converts Js back to xml and writes xml file to disk
+        //   await _writePackageXML(widgetStructure, newRawPackageXML);
+        //   // Build New Version
+        //   const build = await runBuildCommand(widgetStructure);
+        //   await delay(10000);
+        //   // Construct New Version Name
+        //   const newTagName = `v${jsonVersion}`;
+        //   await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
+        //   // Commit and Push Code
+        //   await commitGitChanges(git);
+        //   // Changes Tag to Release
+        //   const release = await createRelease(github, context, newTagName);
+        //   if (!release) {
+        //     return core.error("No Release Found");
+        //   }
+        //   console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
+        //   console.log(`build`, build);
+        //   fs.readdir(
+        //     `${widgetStructure.build}/${jsonVersion}`,
+        //     function (err, files) {
+        //       //handling error
+        //       if (err) {
+        //         return console.log("Unable to scan directory: " + err);
+        //       }
+        //       //listing all files using forEach
+        //       files.forEach(function (file) {
+        //         // Do whatever you want to do with the file
+        //         console.log(file);
+        //       });
+        //     }
+        //   );
+        //   // await lists(widgetStructure);
+        //   // Folder name where Widget is Build
+        //   const upload = await uploadBuildFolderToRelease(
+        //     github,
+        //     widgetStructure,
+        //     jsonVersion,
+        //     release
+        //   );
+        //   return upload;
+        // }
     });
 }
 run();
