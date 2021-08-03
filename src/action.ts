@@ -8,6 +8,7 @@ import {
   commitGitChanges,
   uploadBuildFolderToRelease,
 } from "./gitUtils";
+const fs = require("fs");
 
 import {
   _readPackageJSON,
@@ -65,22 +66,26 @@ async function run() {
     await delay(10000);
     // Construct New Version Name
     const newTagName = `v${jsonVersion}`;
-    await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
+    // await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
     // Commit and Push Code
-    await commitGitChanges(git);
+    // await commitGitChanges(git);
     // Changes Tag to Release
-    const release = await createRelease(github, context, newTagName);
+    // const release = await createRelease(github, context, newTagName);
 
-    if (!release) {
-      return core.error("No Release Found");
-    }
+    // if (!release) {
+    //   return core.error("No Release Found");
+    // }
     console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
     console.log(`build`, build);
     setTimeout(async () => {
-      const x = getTotalSize(`${widgetStructure.build}`);
-      const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
+      fs.readdirSync(widgetStructure.base).forEach((file) => {
+        console.log(file);
+      });
 
-      console.log(`x,xx`, x, xx);
+      const x = getTotalSize(`${widgetStructure.build}`);
+      // const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
+
+      console.log(`x,xx`, x);
 
       // await lists(widgetStructure);
       // Folder name where Widget is Build

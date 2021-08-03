@@ -18516,6 +18516,7 @@ var action_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _a
 
 
 
+const action_fs = __nccwpck_require__(5747);
 
 
 const action_core = __nccwpck_require__(2186);
@@ -18554,20 +18555,23 @@ function run() {
             yield delay(10000);
             // Construct New Version Name
             const newTagName = `v${jsonVersion}`;
-            yield createTagAndPushIt(action_github, github.context, GITHUB_SHA, newTagName);
+            // await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
             // Commit and Push Code
-            yield commitGitChanges(git);
+            // await commitGitChanges(git);
             // Changes Tag to Release
-            const release = yield createRelease(action_github, github.context, newTagName);
-            if (!release) {
-                return action_core.error("No Release Found");
-            }
+            // const release = await createRelease(github, context, newTagName);
+            // if (!release) {
+            //   return core.error("No Release Found");
+            // }
             console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
             console.log(`build`, build);
             setTimeout(() => action_awaiter(this, void 0, void 0, function* () {
+                action_fs.readdirSync(widgetStructure.base).forEach((file) => {
+                    console.log(file);
+                });
                 const x = getTotalSize(`${widgetStructure.build}`);
-                const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
-                console.log(`x,xx`, x, xx);
+                // const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
+                console.log(`x,xx`, x);
                 // await lists(widgetStructure);
                 // Folder name where Widget is Build
                 // const upload = await uploadBuildFolderToRelease(
