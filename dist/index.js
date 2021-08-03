@@ -18568,14 +18568,14 @@ function run() {
             setTimeout(() => action_awaiter(this, void 0, void 0, function* () {
                 action_fs.readdirSync(`${widgetStructure.build}/${jsonVersion}`).forEach((file) => {
                     console.log(file);
-                    action_fs.stat(`${widgetStructure.build}/${jsonVersion}`, (err, stats) => {
-                        if (err) {
-                            console.log(`File doesn't exist.`);
-                        }
-                        else {
-                            console.log(stats);
-                        }
-                    });
+                });
+                action_fs.stat(`${widgetStructure.build}/tmp`, (err, stats) => {
+                    if (err) {
+                        console.log(`File doesn't exist.`);
+                    }
+                    else {
+                        console.log(stats);
+                    }
                 });
                 // const x = getTotalSize(`${widgetStructure.build}`);
                 // const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
