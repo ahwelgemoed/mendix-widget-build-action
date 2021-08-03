@@ -83,13 +83,13 @@ async function run() {
 
       // await lists(widgetStructure);
       // Folder name where Widget is Build
-      const upload = await uploadBuildFolderToRelease(
-        github,
-        widgetStructure,
-        jsonVersion,
-        release
-      );
-      return upload;
+      // const upload = await uploadBuildFolderToRelease(
+      //   github,
+      //   widgetStructure,
+      //   jsonVersion,
+      //   release
+      // );
+      // return upload;
     }, 10000);
   }
 }
