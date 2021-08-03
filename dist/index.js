@@ -25153,14 +25153,15 @@ function run() {
             });
             console.log(`process.env.GITHUB_WORKSPACE`, process.env.GITHUB_WORKSPACE);
             console.log(`process.env.GITHUB_WORKSPACE`, process.env);
+            const artifact = __nccwpck_require__(2605);
             const artifactClient = artifact.create();
             const artifactName = "my-artifact";
-            const rootDirectory = `${process.env.GITHUB_WORKSPACE}/dist`;
+            const files = [`${widgetStructure.build}/${jsonVersion}`];
+            const rootDirectory = "."; // Also possible to use __dirname
             const options = {
-                continueOnError: true,
+                continueOnError: false,
             };
-            const uploadResult = yield artifactClient.uploadArtifact(artifactName, `${widgetStructure.build}/${jsonVersion}`, rootDirectory, options);
-            console.log(`uploadResult`, uploadResult);
+            const uploadResponse = yield artifactClient.uploadArtifact(artifactName, files, rootDirectory, options);
         }), 10000);
         if (xmlVersion !== jsonVersion) {
             //  Inits Git

@@ -71,20 +71,22 @@ async function run() {
     });
     console.log(`process.env.GITHUB_WORKSPACE`, process.env.GITHUB_WORKSPACE);
     console.log(`process.env.GITHUB_WORKSPACE`, process.env);
+    const artifact = require("@actions/artifact");
     const artifactClient = artifact.create();
     const artifactName = "my-artifact";
-    const rootDirectory = `${process.env.GITHUB_WORKSPACE}/dist`;
+    const files = [`${widgetStructure.build}/${jsonVersion}`];
+
+    const rootDirectory = "."; // Also possible to use __dirname
     const options = {
-      continueOnError: true,
+      continueOnError: false,
     };
 
-    const uploadResult = await artifactClient.uploadArtifact(
+    const uploadResponse = await artifactClient.uploadArtifact(
       artifactName,
-      `${widgetStructure.build}/${jsonVersion}`,
+      files,
       rootDirectory,
       options
     );
-    console.log(`uploadResult`, uploadResult);
   }, 10000);
   if (xmlVersion !== jsonVersion) {
     //  Inits Git
