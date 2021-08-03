@@ -43,8 +43,25 @@ async function run() {
 
   const build = await runBuildCommand(widgetStructure);
 
+  const jsonVersion = packageJSON.version;
+  await delay(10000);
+  setTimeout(() => {
+    fs.readdir(
+      `${widgetStructure.build}/${jsonVersion}`,
+      function (err, files) {
+        //handling error
+        if (err) {
+          return console.log("Unable to scan directory: " + err);
+        }
+        //listing all files using forEach
+        files.forEach(function (file) {
+          // Do whatever you want to do with the file
+          console.log(file);
+        });
+      }
+    );
+  }, 10000);
   // Gets Version in Package.json
-  // const jsonVersion = packageJSON.version;
   // // Gets Name in Package.json
   // const packagePackageName = packageJSON.name;
   // // Reads package.xml
