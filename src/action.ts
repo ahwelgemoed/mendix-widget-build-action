@@ -1,6 +1,8 @@
 import simpleGit from "simple-git";
 import { getOctokit, context } from "@actions/github";
 import { PROJECT_PATH, baseDir } from "./constants";
+const artifact = require("@actions/artifact");
+
 import {
   setGITCred,
   createTagAndPushIt,
@@ -51,19 +53,45 @@ async function run() {
   // Parses .xml and and Returns package.xml Version
   const xmlVersion = _xmlVersion(packageXML);
   console.log("🔥");
+  const build = await runBuildCommand(widgetStructure);
+
+  setTimeout(async () => {
+    fs.readdirSync(`${widgetStructure.build}/${jsonVersion}`).forEach(
+      (file) => {
+        console.log(file);
+      }
+    );
+
+    fs.stat(`${widgetStructure.build}/tmp`, (err, stats) => {
+      if (err) {
+        console.log(`File doesn't exist.`);
+      } else {
+        console.log(stats);
+      }
+    });
+  }, 10000);
+  console.log(`process.env.GITHUB_WORKSPACE`, process.env.GITHUB_WORKSPACE);
+  console.log(`process.env.GITHUB_WORKSPACE`, process.env);
+  //   const artifactClient = artifact.create()
+  // const artifactName = 'my-artifact';
+  // const rootDirectory = '/home/user/files/plz-upload'
+  // const options = {
+  //     continueOnError: true
+  // }
+
+  // const uploadResult = await artifactClient.uploadArtifact(artifactName, files, rootDirectory, options)
 
   if (xmlVersion !== jsonVersion) {
     //  Inits Git
-    await git.init();
-    // Set Git Credentials
-    await setGITCred(git);
-    // Update XML to match Package.json and
-    const newRawPackageXML = await _changeXMLVersion(packageXML, jsonVersion);
-    //  Converts Js back to xml and writes xml file to disk
-    await _writePackageXML(widgetStructure, newRawPackageXML);
+    // await git.init();
+    // // Set Git Credentials
+    // await setGITCred(git);
+    // // Update XML to match Package.json and
+    // const newRawPackageXML = await _changeXMLVersion(packageXML, jsonVersion);
+    // //  Converts Js back to xml and writes xml file to disk
+    // await _writePackageXML(widgetStructure, newRawPackageXML);
     // Build New Version
-    const build = await runBuildCommand(widgetStructure);
-    await delay(10000);
+    // await delay(10000);
     // Construct New Version Name
     const newTagName = `v${jsonVersion}`;
     // await createTagAndPushIt(github, context, GITHUB_SHA, newTagName);
@@ -77,35 +105,21 @@ async function run() {
     // }
     console.log(`jsonVersion`, `${widgetStructure.build}/${jsonVersion}`);
     console.log(`build`, build);
-    setTimeout(async () => {
-      fs.readdirSync(`${widgetStructure.build}/${jsonVersion}`).forEach(
-        (file) => {
-          console.log(file);
-        }
-      );
 
-      fs.stat(`${widgetStructure.build}/tmp`, (err, stats) => {
-        if (err) {
-          console.log(`File doesn't exist.`);
-        } else {
-          console.log(stats);
-        }
-      });
-      // const x = getTotalSize(`${widgetStructure.build}`);
-      // const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
+    // const x = getTotalSize(`${widgetStructure.build}`);
+    // const xx = getTotalSize(`${widgetStructure.build}/${jsonVersion}`);
 
-      // console.log(`x,xx`, x);
+    // console.log(`x,xx`, x);
 
-      // await lists(widgetStructure);
-      // Folder name where Widget is Build
-      // const upload = await uploadBuildFolderToRelease(
-      //   github,
-      //   widgetStructure,
-      //   jsonVersion,
-      //   release
-      // );
-      // return upload;
-    }, 10000);
+    // await lists(widgetStructure);
+    // Folder name where Widget is Build
+    // const upload = await uploadBuildFolderToRelease(
+    //   github,
+    //   widgetStructure,
+    //   jsonVersion,
+    //   release
+    // );
+    // return upload;
   }
 }
 
